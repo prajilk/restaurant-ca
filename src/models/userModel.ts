@@ -1,11 +1,12 @@
-import { Document, Model, Schema, model, models } from "mongoose";
-import { IUser } from "./types/user";
+import { Model, Schema, model, models } from "mongoose";
+import { UserDocument } from "./types/user";
 
-const userSchema: Schema<IUser> = new Schema(
+const UserSchema = new Schema<UserDocument>(
     {
         username: {
             type: String,
-            required: true,
+            unique: true,
+            required: [true, "Username is required"],
         },
         password: {
             type: String,
@@ -19,6 +20,5 @@ const userSchema: Schema<IUser> = new Schema(
     { versionKey: false }
 );
 
-const UserModel: Model<IUser> = models.User || model("User", userSchema);
-
-export default UserModel;
+const User = models?.User || model<UserDocument>("User", UserSchema);
+export default User;
