@@ -3,4 +3,5 @@ export interface UserDocument {
     username: string;
     role: "ADMIN" | "MANAGER" | "DELIVERY";
     password: string;
+    storeId: string;
 }

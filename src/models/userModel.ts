@@ -1,4 +1,4 @@
-import { Model, Schema, model, models } from "mongoose";
+import { Schema, model, models } from "mongoose";
 import { UserDocument } from "./types/user";
 
 const UserSchema = new Schema<UserDocument>(
@@ -15,6 +15,9 @@ const UserSchema = new Schema<UserDocument>(
         role: {
             type: String,
             required: true,
+        },
+        storeId: {
+            type: Schema.Types.Mixed,
         },
     },
     { versionKey: false }

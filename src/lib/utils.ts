@@ -15,6 +15,15 @@ function success200(data: { [key: string]: any }) {
     return NextResponse.json(resJson, { status: 200 });
 }
 
+function success201(data: { [key: string]: any }) {
+    const json = {
+        success: true,
+        message: "Created successfully",
+    };
+    const resJson = Object.assign({}, json, data);
+    return NextResponse.json(resJson, { status: 201 });
+}
+
 function error500(data: { [key: string]: any }) {
     const json = {
         success: false,
@@ -42,6 +51,14 @@ function error400(message: string, data?: { [key: string]: any }) {
     return NextResponse.json(resJson, { status: 400 });
 }
 
+function error403() {
+    const json = {
+        success: false,
+        message: "Forbidden: You are not authorized to perform this action!",
+    };
+    return NextResponse.json(json, { status: 403 });
+}
+
 function error401(message: string, data?: { [key: string]: any }) {
     const json = {
         success: false,
@@ -51,4 +68,13 @@ function error401(message: string, data?: { [key: string]: any }) {
     return NextResponse.json(resJson, { status: 401 });
 }
 
-export { cn, success200, error500, error404, error400, error401 };
+export {
+    cn,
+    success200,
+    success201,
+    error500,
+    error404,
+    error403,
+    error400,
+    error401,
+};
