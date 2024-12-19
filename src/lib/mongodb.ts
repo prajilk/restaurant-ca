@@ -8,7 +8,7 @@ const connectDB = async () => {
             return Promise.resolve(true);
         }
     } catch (error) {
-        console.error(error);
+        console.error(error, "<==== ERROR");
         return Promise.reject(error);
     }
 };
