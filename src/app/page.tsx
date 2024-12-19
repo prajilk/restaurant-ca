@@ -12,7 +12,13 @@ import { redirect } from "next/navigation";
 
 export default async function Home() {
     const session = await getServerSession(authOptions);
-    if (session?.user.id) redirect("/dashboard");
+    if (session?.user.role === "admin") {
+        return redirect("/admin");
+    } else if (session?.user.role === "manager") {
+        return redirect("/manager");
+    } else if (session?.user.role === "delivery") {
+        return redirect("/delivery");
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
