@@ -5,6 +5,16 @@ import credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
+    secret: process.env.NEXTAUTH_SECRET,
+    session: {
+        strategy: "jwt",
+    },
+    jwt: {
+        maxAge: 12 * 60 * 60,
+    },
+    pages: {
+        signIn: "/",
+    },
     providers: [
         credentials({
             name: "Credentials",
@@ -36,9 +46,6 @@ export const authOptions: NextAuthOptions = {
             },
         }),
     ],
-    session: {
-        strategy: "jwt",
-    },
     callbacks: {
         async jwt({ token, user, trigger, session }) {
             if (trigger === "update") {

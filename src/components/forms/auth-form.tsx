@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -50,7 +49,7 @@ const AuthForm = () => {
                 form.reset();
                 throw new Error("Invalid credentials.");
             }
-            toast.success("Signed in successfully.");
+            toast.success("Signed in successfully. redirecting...");
             router.refresh();
             router.replace(signInResponse?.url || "/");
         } catch (error: any) {
