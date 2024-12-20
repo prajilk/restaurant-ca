@@ -1,26 +1,19 @@
 import {
     error400,
-    error401,
     error403,
     error500,
+    success200,
     success201,
 } from "@/lib/utils";
 import User from "@/models/userModel";
 import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { ZodUserSchemaWithPassword } from "@/lib/zod-schema/schema";
+import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 
-export async function POST(req: NextRequest) {
+async function postHandler(req: NextRequest) {
     try {
-        const session = await getServerSession(authOptions);
-
-        if (!session || !session.user || !session.user.id) {
-            return error401("Unauthorized");
-        }
-
-        if (session.user.role !== "ADMIN") {
+        if (req.user?.role !== "ADMIN") {
             return error403();
         }
 
@@ -63,3 +56,22 @@ export async function POST(req: NextRequest) {
         return error500({ error: error.message });
     }
 }
+
+async function getHandler(req: NextRequest) {
+    try {
+        if (req.user?.role !== "ADMIN") {
+            return error403();
+        }
+
+        const users = await User.find({
+            role: { $ne: "ADMIN" },
+        });
+
+        success200(users)
+    } catch (error: any) {
+        return error500({ error: error.message });
+    }
+}
+
+export const POST = withDbConnectAndAuth(postHandler);
+export const GET = withDbConnectAndAuth(getHandler);
