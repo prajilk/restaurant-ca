@@ -8,10 +8,10 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     session: {
         strategy: "jwt",
-        maxAge: 1 * 60 * 60,
+        maxAge: 24 * 60 * 60,  // 1 day in seconds (86,400 seconds)
     },
     jwt: {
-        maxAge: 12 * 60 * 60,
+        maxAge: 24 * 60 * 60,  // 1 day in seconds (86,400 seconds)
     },
     pages: {
         signIn: "/",

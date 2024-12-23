@@ -19,6 +19,7 @@ const UserSchema = new Schema<UserDocument>(
         storeId: {
             type: Schema.Types.Mixed,
         },
+        iv: String
     },
     { versionKey: false }
 );

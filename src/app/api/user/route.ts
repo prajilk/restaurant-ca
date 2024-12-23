@@ -7,9 +7,9 @@ import {
 } from "@/lib/utils";
 import User from "@/models/userModel";
 import { NextRequest } from "next/server";
-import bcrypt from "bcryptjs";
 import { ZodUserSchemaWithPassword } from "@/lib/zod-schema/schema";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
+import { decryptPassword, encryptPassword } from "@/lib/password";
 
 async function postHandler(req: NextRequest) {
     try {
@@ -32,21 +32,22 @@ async function postHandler(req: NextRequest) {
                 return error400("Username already exists!");
             }
 
-            const hashedPassword = await bcrypt.hash(result.data.password, 10);
+            const hashedPassword = encryptPassword(result.data.password);
 
             const newUser = await User.create({
                 username: result.data.username,
-                password: hashedPassword,
+                password: hashedPassword.encryptedPassword,
                 role: result.data.role,
                 storeId: result.data.storeId,
+                iv: hashedPassword.iv
             });
 
-            return success201({
+            return success201({user: {
                 id: newUser._doc._id,
                 username: newUser._doc.username,
                 role: newUser._doc.role,
                 storeId: newUser._doc.storeId,
-            });
+            }});
         }
 
         if (result.error) {
@@ -67,7 +68,18 @@ async function getHandler(req: NextRequest) {
             role: { $ne: "ADMIN" },
         });
 
-        success200(users)
+        const decryptedUsers = users.map((user: any) => {
+            const decryptedPassword = decryptPassword(user.password, user.iv);
+            return {
+                id: user._id,
+                username: user.username,
+                role: user.role,
+                storeId: user.storeId,
+                password: decryptedPassword
+            };
+        });
+
+        return success200({ users: decryptedUsers });
     } catch (error: any) {
         return error500({ error: error.message });
     }
