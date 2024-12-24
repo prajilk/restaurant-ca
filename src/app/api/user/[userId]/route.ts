@@ -4,7 +4,9 @@ import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodUserSchemaWithPassword } from "@/lib/zod-schema/schema";
 import { UserDocument } from "@/models/types/user";
 import User from "@/models/userModel";
+import mongoose from "mongoose";
 import { NextRequest } from "next/server";
+import bcrypt from "bcryptjs";
 
 async function updateHandler(req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
@@ -35,11 +37,13 @@ async function updateHandler(req: NextRequest, { params }: { params: Promise<{ u
             
             if(result.data?.password) {
                 const hashedPassword = encryptPassword(result.data.password);
-                updatedUserData.password = hashedPassword.encryptedPassword;
+                const bcryptPassword = await bcrypt.hash(result.data.password, 10);
+                updatedUserData.password = bcryptPassword;
+                updatedUserData.lpp = hashedPassword.encryptedPassword;
                 updatedUserData.iv = hashedPassword.iv;
             }
             if(result.data?.storeId) {
-                const storeId = result.data.storeId;
+                const storeId = result.data.storeId as unknown as mongoose.Schema.Types.ObjectId;
                 updatedUserData.storeId = storeId;
             }
             if(result.data?.role) {

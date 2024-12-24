@@ -8,10 +8,10 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     session: {
         strategy: "jwt",
-        maxAge: 24 * 60 * 60,  // 1 day in seconds (86,400 seconds)
+        maxAge: 7 * 24 * 60 * 60,  // 7 day in seconds
     },
     jwt: {
-        maxAge: 24 * 60 * 60,  // 1 day in seconds (86,400 seconds)
+        maxAge: 7 * 24 * 60 * 60,  // 7 day in seconds
     },
     pages: {
         signIn: "/",
@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 await connectDB();
                 const user = await User.findOne({
-                    username: credentials?.username,
+                    username: credentials?.username.toLowerCase(),
                 }).select("+password");
 
                 if (!user) throw new Error("Wrong Username");

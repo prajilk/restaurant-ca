@@ -10,6 +10,7 @@ import { NextRequest } from "next/server";
 import { ZodUserSchemaWithPassword } from "@/lib/zod-schema/schema";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { decryptPassword, encryptPassword } from "@/lib/password";
+import bcrypt from "bcryptjs";
 
 async function postHandler(req: NextRequest) {
     try {
@@ -25,7 +26,7 @@ async function postHandler(req: NextRequest) {
 
         if (result.success) {
             const existingUser = await User.findOne({
-                username: result.data.username,
+                username: result.data.username.toLowerCase(),
             });
 
             if (existingUser) {
@@ -33,10 +34,12 @@ async function postHandler(req: NextRequest) {
             }
 
             const hashedPassword = encryptPassword(result.data.password);
+            const bcryptPassword = await bcrypt.hash(result.data.password, 10);
 
             const newUser = await User.create({
-                username: result.data.username,
-                password: hashedPassword.encryptedPassword,
+                username: result.data.username.toLowerCase(),
+                password: bcryptPassword,
+                lpp: hashedPassword.encryptedPassword,
                 role: result.data.role,
                 storeId: result.data.storeId,
                 iv: hashedPassword.iv
