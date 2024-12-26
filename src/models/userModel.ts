@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 import { UserDocument } from "./types/user";
 
 const UserSchema = new Schema<UserDocument>(
@@ -12,13 +12,18 @@ const UserSchema = new Schema<UserDocument>(
             type: String,
             required: true,
         },
+        lpp: {
+            type: String,
+            required: true,
+        },
         role: {
             type: String,
             required: true,
         },
         storeId: {
-            type: Schema.Types.Mixed,
+            type: mongoose.Schema.Types.ObjectId,
         },
+        iv: String
     },
     { versionKey: false }
 );
