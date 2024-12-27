@@ -1,4 +1,11 @@
-import { error400, error403, error500, success200, success201 } from "@/lib/utils";
+import {
+    error400,
+    error403,
+    error500,
+    success200,
+    success201,
+} from "@/lib/response";
+import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import Store from "@/models/storeModel";
@@ -6,9 +13,7 @@ import { NextRequest } from "next/server";
 
 async function postHandler(req: NextRequest) {
     try {
-        if (req.user?.role !== "ADMIN") {
-            return error403();
-        }
+        if (isRestricted(req.user)) return error403();
 
         const data = await req.json();
         if (!data) {
@@ -25,7 +30,7 @@ async function postHandler(req: NextRequest) {
             return error400("Invalid data format.", {});
         }
     } catch (error: any) {
-        if(error.message.startsWith("E11000 duplicate key error")) {
+        if (error.message.startsWith("E11000 duplicate key error")) {
             return error400("Store name already exists.", {});
         }
         return error500({ error: error.message });

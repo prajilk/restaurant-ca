@@ -1,18 +1,20 @@
-import { error400, error403, error500, success200 } from "@/lib/utils";
+import { error400, error403, error500, success200 } from "@/lib/response";
+import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import Store from "@/models/storeModel";
 import User from "@/models/userModel";
 import { NextRequest } from "next/server";
 
-async function updateHandler(req: NextRequest, { params }: { params: Promise<{ storeId: string }> }) {
+async function updateHandler(
+    req: NextRequest,
+    { params }: { params: Promise<{ storeId: string }> }
+) {
     try {
-        if (req.user?.role !== "ADMIN") {
-            return error403();
-        }
+        if (isRestricted(req.user)) return error403();
 
         const data = await req.json();
-        
+
         if (!data) {
             return error400("Invalid data format.", {});
         }
@@ -31,8 +33,10 @@ async function updateHandler(req: NextRequest, { params }: { params: Promise<{ s
             }
 
             const updatedStore = await Store.findOneAndUpdate(
-                { _id: storeId }, result.data, { new: true }
-            );            
+                { _id: storeId },
+                result.data,
+                { new: true }
+            );
 
             return success200({ store: updatedStore });
         }
@@ -45,7 +49,10 @@ async function updateHandler(req: NextRequest, { params }: { params: Promise<{ s
     }
 }
 
-async function deleteHandler(req: NextRequest, { params }: { params: Promise<{ storeId: string }> }) {
+async function deleteHandler(
+    req: NextRequest,
+    { params }: { params: Promise<{ storeId: string }> }
+) {
     try {
         if (req.user?.role !== "ADMIN") {
             return error403();
@@ -57,7 +64,9 @@ async function deleteHandler(req: NextRequest, { params }: { params: Promise<{ s
 
         if (userWithStore) {
             // If users are associated, block deletion
-            return error400("Cannot delete this store. There are users associated with this store.");
+            return error400(
+                "Cannot delete this store. There are users associated with this store."
+            );
         }
 
         const deletedStore = await Store.deleteOne({ _id: storeId });

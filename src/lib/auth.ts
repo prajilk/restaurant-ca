@@ -8,10 +8,10 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     session: {
         strategy: "jwt",
-        maxAge: 7 * 24 * 60 * 60,  // 7 day in seconds
+        maxAge: 7 * 24 * 60 * 60, // 7 day in seconds
     },
     jwt: {
-        maxAge: 7 * 24 * 60 * 60,  // 7 day in seconds
+        maxAge: 7 * 24 * 60 * 60, // 7 day in seconds
     },
     pages: {
         signIn: "/",
@@ -30,14 +30,15 @@ export const authOptions: NextAuthOptions = {
                     username: credentials?.username.toLowerCase(),
                 }).select("+password");
 
-                if (!user) throw new Error("Wrong Username");
+                if (!user) throw new Error("Invalid username or password");
 
                 const passwordMatch = await bcrypt.compare(
                     credentials!.password,
                     user.password
                 );
 
-                if (!passwordMatch) throw new Error("Wrong Password");
+                if (!passwordMatch)
+                    throw new Error("Invalid username or password");
                 return {
                     username: user.username,
                     role: user.role,
@@ -80,8 +81,6 @@ export const authOptions: NextAuthOptions = {
                     }
                 }
             } catch (error) {
-                console.log(error);
-
                 return {
                     ...session,
                     user: {

@@ -21,9 +21,9 @@ const UserSchema = new Schema<UserDocument>(
             required: true,
         },
         storeId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId || null,
         },
-        iv: String
+        iv: String,
     },
     { versionKey: false }
 );

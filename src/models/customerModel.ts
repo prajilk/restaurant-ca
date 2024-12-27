@@ -1,11 +1,15 @@
 import { Schema, model, models } from "mongoose";
-import { StoreDocument } from "./types/store";
+import { CustomerDocument } from "./types/customer";
 
-const StoreSchema = new Schema<StoreDocument>(
+const CustomerSchema = new Schema<CustomerDocument>(
     {
         name: {
             type: String,
-            unique: true,
+            required: true,
+        },
+        phone: {
+            type: String,
+            required: true,
         },
         address: {
             type: String,
@@ -23,10 +27,10 @@ const StoreSchema = new Schema<StoreDocument>(
             type: String,
             required: true,
         },
-        phone: String,
     },
     { versionKey: false }
 );
 
-const Store = models?.Store || model<StoreDocument>("Store", StoreSchema);
-export default Store;
+const Customer =
+    models?.Customer || model<CustomerDocument>("Customer", CustomerSchema);
+export default Customer;
