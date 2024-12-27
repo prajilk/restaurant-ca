@@ -1,8 +1,8 @@
 import dbConnect from "@/lib/mongodb";
-import { error401, error500 } from "./utils";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth";
 import { NextRequest } from "next/server";
+import { error401, error500 } from "./response";
 
 export function withDbConnectAndAuth(handler: Function, isAuthRequired = true) {
     return async (req: NextRequest, context: any) => {

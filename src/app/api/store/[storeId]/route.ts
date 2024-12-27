@@ -1,4 +1,4 @@
-import { error400, error403, error500, success200 } from "@/lib/response";
+import { error400, error403, error409, error500, success200 } from "@/lib/response";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
@@ -64,9 +64,7 @@ async function deleteHandler(
 
         if (userWithStore) {
             // If users are associated, block deletion
-            return error400(
-                "Cannot delete this store. There are users associated with this store."
-            );
+            return error409("Cannot delete this store. There are users associated with this store.")
         }
 
         const deletedStore = await Store.deleteOne({ _id: storeId });

@@ -62,6 +62,14 @@ function error401(message: string, data?: { [key: string]: any }) {
     return NextResponse.json(resJson, { status: 401 });
 }
 
+function error409(message: string) {
+    const json = {
+        success: false,
+        message,
+    };
+    return NextResponse.json(json, { status: 409 });
+}
+
 export {
     success200,
     success201,
@@ -70,4 +78,5 @@ export {
     error403,
     error400,
     error401,
+    error409
 };

@@ -6,4 +6,6 @@ export interface CustomerDocument {
     city: string;
     province: string;
     zip: string;
+    lat: number;
+    lng: number;
 }

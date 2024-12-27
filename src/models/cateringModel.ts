@@ -3,12 +3,14 @@ import { CateringDocument } from "./types/catering";
 
 const CateringSchema = new Schema<CateringDocument>(
     {
-        storeId: {
+        store: {
             type: mongoose.Schema.Types.ObjectId,
+            ref: "Store",
             required: true,
         },
-        customerId: {
+        customer: {
             type: mongoose.Schema.Types.ObjectId,
+            ref: "Customer",
             required: true,
         },
         deliveryDate: {
@@ -37,10 +39,27 @@ const CateringSchema = new Schema<CateringDocument>(
             ],
             required: true,
         },
+        advancePaid: {
+            type: Number,
+            required: true,
+        },
+        pendingBalance: {
+            type: Number,
+            required: true,
+        },
+        fullyPaid: {
+            type: Boolean,
+            default: false,
+        },
         totalPrice: {
             type: Number,
             required: true,
         },
+        status: {
+            type: String,
+            enum: ["PENDING", "IN_PROGRESS", "DELIVERED", "CANCELLED"],
+            default: "PENDING"
+        }
     },
     { versionKey: false, timestamps: true }
 );
